@@ -1,14 +1,14 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import ImageComponent from '../utils/ImageComponent';
-import {useNavigation} from '@react-navigation/native';
+// import {useNavigation} from '@react-navigation/native';
 import {TouchableOpacity} from 'react-native';
 
 const MenuBar: React.FC = () => {
-  const navigation = useNavigation();
-  const openProfileDrawer = () => {
-    navigation.navigate('Drawer');
-  };
+  // const navigation = useNavigation();
+  // const openProfileDrawer = () => {
+  //   navigation.navigate('Drawer');
+  // };
   return (
     <View style={styles.outerContainer}>
       <View style={styles.innerContainer}>
@@ -16,9 +16,8 @@ const MenuBar: React.FC = () => {
           url={require('../assets/genie-logo.png')}
           style={styles.images}
         />
-        <Text>Genie Application</Text>
       </View>
-      <View style={styles.innerContainer}>
+      <View style={styles.innerContainerTwo}>
         <ImageComponent
           url={require('../assets/cart-icon.png')}
           style={styles.cartIcon}
@@ -32,7 +31,7 @@ const MenuBar: React.FC = () => {
         <Text>Location</Text>
         <Text>PinCode</Text>
       </View>
-      <TouchableOpacity onPress={openProfileDrawer}>
+      <TouchableOpacity>
         <ImageComponent
           url={require('../assets/user.png')}
           style={styles.userIcon}
@@ -54,6 +53,11 @@ const styles = StyleSheet.create({
     padding: 6,
   },
   innerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '50%',
+  },
+  innerContainerTwo: {
     flexDirection: 'row',
     alignItems: 'center',
   },
