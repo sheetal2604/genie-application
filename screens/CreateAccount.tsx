@@ -10,14 +10,18 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Login: React.FC = ({navigation}: any) => {
+const CreateAccount: React.FC = ({navigation}: any) => {
   type UserDetails = {
     username: string;
+    email: string;
     password: string;
+    reenterPassword: string;
   };
   const [userDetails, setUserDetails] = useState<UserDetails>({
     username: '',
+    email: '',
     password: '',
+    reenterPassword: '',
   });
   const handleUserDetails = (key: string, enteredText: string) => {
     setUserDetails(prev => {
@@ -29,35 +33,14 @@ const Login: React.FC = ({navigation}: any) => {
   };
   const getData = async () => {
     try {
-      const jsonValue = await AsyncStorage.getItem('userData');
-      if (jsonValue !== null) {
-        let jsonData = await JSON.parse(jsonValue);
-        if (
-          jsonData.username === userDetails.username &&
-          jsonData.password === userDetails.password
-        ) {
-          await AsyncStorage.setItem('isLoggedIn', 'true');
-          navigation.navigate('Drawer');
-          let data = await fetch('https://dummyjson.com/auth/login', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-              username: 'kminchelle',
-              password: '0lelplR',
-            }),
-          });
-          let res = await data.json();
-          console.log(res.token);
-        } else {
-          Alert.alert('Something went wrong', 'Invalid Credentials');
-        }
-      }
+      await AsyncStorage.setItem('userData', JSON.stringify(userDetails));
+      //   navigation.navigate('Login');
     } catch (e) {
       console.log(e);
     }
   };
-
   const isPasswordValid = (password: string) => {
+    // Define the password validation regular expressions
     const minLengthRegex = /.{7,}/;
     const capitalLetterRegex = /[A-Z]/;
     const numberRegex = /\d/;
@@ -69,11 +52,13 @@ const Login: React.FC = ({navigation}: any) => {
   };
   const handleValidation = () => {
     let isValid = true;
-    if (!userDetails.username && !userDetails.password) {
-      Alert.alert(
-        'Something went wrong',
-        'Please enter your username and password',
-      );
+    if (
+      !userDetails.username &&
+      !userDetails.email &&
+      !userDetails.password &&
+      !userDetails.reenterPassword
+    ) {
+      Alert.alert('Something went wrong', 'Fields should not be empty');
       isValid = false;
     } else if (!userDetails.username) {
       Alert.alert('Something went wrong', 'Please enter your username');
@@ -84,6 +69,9 @@ const Login: React.FC = ({navigation}: any) => {
         'username length should be greater than 7',
       );
       isValid = false;
+    } else if (!userDetails.email.match(/\S+@\S+\.+\S/)) {
+      Alert.alert('Something went wrong', 'Please enter valid email address');
+      isValid = false;
     } else if (!userDetails.password) {
       Alert.alert('Something went wrong', 'Please enter your password');
       isValid = false;
@@ -93,9 +81,13 @@ const Login: React.FC = ({navigation}: any) => {
         'The password length should be greater than 6, with 1 capital letter, 1 number ',
       );
       isValid = false;
+    } else if (userDetails.password !== userDetails.reenterPassword) {
+      Alert.alert('Something went wrong', 'Password did not match');
+      isValid = false;
     }
     if (isValid) {
       getData();
+      navigation.navigate('Login');
     }
   };
   return (
@@ -110,21 +102,32 @@ const Login: React.FC = ({navigation}: any) => {
         onChangeText={e => handleUserDetails('username', e)}
       />
       <TextInput
+        placeholder="email"
+        style={styles.textInput}
+        onChangeText={e => handleUserDetails('email', e)}
+      />
+      <TextInput
         placeholder="password"
         style={styles.textInput}
         onChangeText={e => handleUserDetails('password', e)}
         secureTextEntry={true}
       />
+      <TextInput
+        placeholder="re-enter password"
+        style={styles.textInput}
+        onChangeText={e => handleUserDetails('reenterPassword', e)}
+        secureTextEntry={true}
+      />
       <TouchableOpacity style={styles.button} onPress={handleValidation}>
-        <Text style={styles.buttonText}>LOGIN</Text>
+        <Text style={styles.buttonText}>Sign-In</Text>
       </TouchableOpacity>
       <View style={styles.signIn}>
         <Text>
-          New to Genie?{' '}
+          Already have an account?{' '}
           <Text
             style={styles.link}
-            onPress={() => navigation.navigate('CreateAccount')}>
-            Create a new account
+            onPress={() => navigation.navigate('Login')}>
+            Login
           </Text>
         </Text>
       </View>
@@ -132,7 +135,7 @@ const Login: React.FC = ({navigation}: any) => {
   );
 };
 
-export default Login;
+export default CreateAccount;
 
 const styles = StyleSheet.create({
   images: {
@@ -149,7 +152,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     width: 300,
     marginBottom: 20,
-    textAlign: 'center',
+    padding: 8,
     fontSize: 19,
   },
   button: {

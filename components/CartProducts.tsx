@@ -1,8 +1,5 @@
-import React, {useLayoutEffect} from 'react';
-import {View, Image, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import {NavigationProp, useNavigation} from '@react-navigation/native';
-import Rating from './Rating';
-import {StackRootParamList} from '../navigators/NavigationStack';
+import React from 'react';
+import {Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 
 type PropTypes = {
   id: number;
@@ -15,46 +12,30 @@ type PropTypes = {
   category: string;
   images: [];
   thumbnail: string;
+  quantity: number;
 };
-const Product: React.FC<{item: PropTypes}> = ({item}) => {
-  const navigation: NavigationProp<StackRootParamList> = useNavigation();
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      title: item.category,
-    });
-  }, [item.category, navigation]);
-  const originalPrice = Math.round(
-    item.price / (1 - item.discountPercentage / 100),
-  );
-  // eslint-disable-next-line @typescript-eslint/no-shadow
-  const handleProductDetails = (item: PropTypes) => {
-    navigation.navigate('ProductDetails', {
-      screen: 'ProductDetails',
-      params: {
-        item,
-      },
-    });
-  };
+const CartProducts: React.FC<{item: PropTypes}> = ({item}) => {
   return (
-    <TouchableOpacity
-      style={styles.outer}
-      onPress={() => handleProductDetails(item)}>
-      <View style={styles.imageContainer}>
+    <SafeAreaView style={styles.outer}>
+      <View>
         <Image source={{uri: item.thumbnail}} style={styles.image} />
       </View>
       <View style={styles.innerOne}>
         <Text style={styles.text}>{item.title}</Text>
         <View style={styles.pricingDetails}>
-          <Text style={styles.text}>${item.price}</Text>
-          <Text style={styles.originalPrice}>{originalPrice}</Text>
-          <Text style={styles.discount}>{item.discountPercentage}% off</Text>
+          <View style={styles.price}>
+            <Text style={styles.text}>${item.price * item.quantity}</Text>
+          </View>
+          <View style={styles.qty}>
+            <Text style={styles.textQty}>Qty- {item.quantity}</Text>
+          </View>
         </View>
-        <Rating rating={item.rating} />
       </View>
-    </TouchableOpacity>
+    </SafeAreaView>
   );
 };
-export default Product;
+
+export default CartProducts;
 
 const styles = StyleSheet.create({
   outer: {
@@ -78,6 +59,7 @@ const styles = StyleSheet.create({
   innerOne: {
     flex: 1,
     paddingTop: 10,
+    marginHorizontal: 10,
   },
   innerTwo: {
     flexDirection: 'row',
@@ -93,6 +75,7 @@ const styles = StyleSheet.create({
   },
   pricingDetails: {
     flexDirection: 'row',
+    marginTop: 15,
   },
   originalPrice: {
     marginBottom: 10,
@@ -104,5 +87,15 @@ const styles = StyleSheet.create({
     color: 'red',
     marginBottom: 10,
     fontSize: 17,
+  },
+  textQty: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  qty: {
+    marginLeft: 60,
+  },
+  price: {
+    width: '40%',
   },
 });

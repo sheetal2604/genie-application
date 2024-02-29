@@ -4,12 +4,13 @@ import {useAppDispatch, useAppSelector} from '../redux/appHooks';
 import {AllCategoryDetails} from '../redux/categorySlice';
 import {FlatList} from 'react-native';
 import {TouchableOpacity} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {AllProductDetails} from '../redux/productSlice';
+import {StackRootParamList} from '../navigators/NavigationStack';
 
 const Carousel: React.FC = () => {
   const dispatch = useAppDispatch();
-  const navigation = useNavigation();
+  const navigation: NavigationProp<StackRootParamList> = useNavigation();
   useEffect(() => {
     dispatch(AllCategoryDetails());
   }, [dispatch]);
@@ -52,11 +53,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    backgroundColor: '#d6f5f5',
-    borderColor: '#d6f5f5',
+    backgroundColor: '#ffd1b3',
+    borderColor: '#ffd1b3',
     height: '40%',
     marginTop: 60,
     paddingHorizontal: 10,
+    marginHorizontal: 10,
   },
   item: {
     marginHorizontal: 4,
@@ -64,17 +66,26 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderColor: '#9F70FD',
     paddingVertical: 12,
-    paddingHorizontal: 16,
+    paddingHorizontal: 10,
     marginTop: 40,
-    marginRight: 10,
+    marginRight: 24,
     height: 200,
-    width: 150,
+    width: 95,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
   text: {
     paddingVertical: 70,
     textAlign: 'center',
-    fontSize: 15,
+    fontSize: 12,
     color: '#000000',
+    fontWeight: '600',
   },
   title: {
     color: 'black',
@@ -86,6 +97,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   titleBox: {
-    marginTop: 30,
+    marginTop: 40,
   },
 });
